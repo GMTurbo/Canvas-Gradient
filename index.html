@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <title>Linear Gradient Test</title>
+        <script type="text/javascript">
+			
+			var width, height, drawing; 
+			
+			var canvas;
+			
+			var ctx, grad;
+			
+			var timer = null;
+			
+			var step = 0, step2 = 255, dir1 = 1, dir2 = -1, angle = 0, startAngle = 0, length, opacity = 1;
+			
+			var takeStep = function(){
+				step += dir1*0.33;
+				step2 += dir2*0.33;
+				if(step > 255 || step < 0){
+					step > 255 ? dir1 = -1 : dir1 = 1;
+					step += dir1*1;
+				}
+				if(step2 < 0 || step2 > 255){
+					step2 > 255 ? dir2 = -1 : dir2 = 1;
+					step2 += dir2*0.33;
+				}
+			}
+			
+			var toRads = function(degs){ return degs * Math.PI/180.0;}
+			var toDegs= function(rads){ return rads * 180.0/Math.PI;}
+			
+			function randomFromTo(from, to){
+			       return Math.floor(Math.random() * (to - from + 1) + from);
+			    }
+			
+			function init(){
+				
+				drawing = true;
+				
+				width = window.innerWidth;
+				
+				height = window.innerHeight;
+				
+				length = Math.pow(width*width + height*height, 0.5);
+				
+				startAngle = toDegs(Math.atan(-width/2, height/2));
+				
+				canvas = document.getElementById("canvas");
+				canvas.width = width;
+				canvas.height = height;
+
+				ctx = canvas.getContext("2d"), 
+				
+				grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+				
+				setInterval("draw()", 33);
+				
+			}
+			
+			document.onkeypress = function(event){
+				switch(event.keyCode){
+					case 32:
+						drawing = !drawing;
+					break;
+				}
+			}
+			
+            function draw() {
+				if(drawing){
+ 					clearCanvas(ctx, canvas);
+                // set up gradient
+
+					grad = ctx.createLinearGradient(-length*Math.sin(toRads(angle)), -length*Math.cos(toRads(angle)), length*Math.sin(toRads(angle)), length*Math.cos(toRads(angle)) );
+
+					grad.addColorStop(0, 'rgba(' + Math.round(255-step) + ',' +   
+				                       Math.round(255-step2) + ',' + Math.round(255-(step2 - step)) + ',' + opacity + ')');
+					//takeStep();
+					//grad.addColorStop(0.2, 'rgba(' + Math.round(255-step) + ',' +   
+				    //                  Math.round(255-step2) + ',' + Math.round(255-(step - step2)) +  ',' + opacity + ')');
+					takeStep();
+                	grad.addColorStop(0.4, 'rgba(' + Math.round(255-step) + ',' +   
+				                       Math.round(255-step2) + ',' + Math.round(255-(step - step2)) +  ',' + opacity + ')');
+					//takeStep();
+					//grad.addColorStop(0.6, 'rgba(' + Math.round(255-step) + ',' +   
+				                    //Math.round(255-step2) + ',' + Math.round(255-(step + step2)) + ',' + opacity + ')');
+					takeStep();
+                	grad.addColorStop(0.8, 'rgba(' + Math.round(255-step) + ',' +   
+				                       Math.round(255-step2) + ',' + Math.round(255-(step2 + step)) + ',' + opacity + ')');
+					takeStep();
+                	grad.addColorStop(1, 'rgba(' + Math.round(255-step) + ',' +   
+				                       Math.round(255-step2) + ',' + Math.round(255-(step2 - step)) + ',' + opacity + ')');
+
+                	ctx.fillStyle = grad;
+                	ctx.fillRect(0, 0, width, height);
+
+					angle+=0.5;
+					if(angle>359 + startAngle){
+						angle = startAngle;
+					}
+				}
+				
+            }
+
+			function clearCanvas(context, canvas) {
+			  context.clearRect(0, 0, width, height);
+			  var w = canvas.width;
+			  canvas.width = 1;
+			  canvas.width = w;
+			}
+			
+			function draw2(){
+				var ctx = document.getElementById('canvas').getContext('2d');  
+				  for (var i=0;i<26;i++){  
+				    for (var j=0;j<26;j++){  
+				      ctx.fillStyle = 'rgb(' + Math.floor(255-6.5*i) + ',' +   
+				                       Math.floor(255-6.5*j) + ',0)';  
+				      ctx.fillRect(j*25,i*25,25,25);  
+				    }  
+				  }
+			}
+			
+        </script>
+    </head>
+    <body onload="init()">
+    <canvas id="canvas"></canvas>
+</body>
+</html>
