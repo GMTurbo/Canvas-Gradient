@@ -11,18 +11,23 @@
 			
 			var timer = null;
 			
-			var step = 0, step2 = 255, dir1 = 1, dir2 = -1, angle = 0, startAngle = 0, length, opacity = 1;
+			var step = 0, step2 = 255, step3=128, dir1 = 1, dir2 = -1, dir3=1, angle = 0, startAngle = 0, length, opacity = 1;
 			
 			var takeStep = function(){
-				step += dir1*0.33;
-				step2 += dir2*0.33;
+				step += dir1*0.25;
+				step2 += dir2*0.25;
+				step3 += dir3*0.25;
 				if(step > 255 || step < 0){
 					step > 255 ? dir1 = -1 : dir1 = 1;
-					step += dir1*1;
+					step += dir1*0.5;
 				}
 				if(step2 < 0 || step2 > 255){
 					step2 > 255 ? dir2 = -1 : dir2 = 1;
-					step2 += dir2*0.33;
+					step2 += dir2*0.5;
+				}
+				if(step3 < 0 || step3 > 255){
+					step3 > 255 ? dir3 = -1 : dir3 = 1;
+					step3 += dir3*0.5;
 				}
 			}
 			
@@ -37,9 +42,9 @@
 				
 				drawing = true;
 				
-				width = window.innerWidth;
+				width = window.innerWidth*0.95;
 				
-				height = window.innerHeight;
+				height = window.innerHeight*0.95;
 				
 				length = Math.pow(width*width + height*height, 0.5);
 				
@@ -71,24 +76,25 @@
                 // set up gradient
 
 					grad = ctx.createLinearGradient(-length*Math.sin(toRads(angle)), -length*Math.cos(toRads(angle)), length*Math.sin(toRads(angle)), length*Math.cos(toRads(angle)) );
-
+					
+					//(step - step2)
 					grad.addColorStop(0, 'rgba(' + Math.round(255-step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-(step2 - step)) + ',' + opacity + ')');
-					//takeStep();
-					//grad.addColorStop(0.2, 'rgba(' + Math.round(255-step) + ',' +   
-				    //                  Math.round(255-step2) + ',' + Math.round(255-(step - step2)) +  ',' + opacity + ')');
+				                       Math.round(255-step2) + ',' + Math.round(255-step3) + ',' + opacity + ')');
 					takeStep();
-                	grad.addColorStop(0.4, 'rgba(' + Math.round(255-step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-(step - step2)) +  ',' + opacity + ')');
+					grad.addColorStop(0.2, 'rgba(' + Math.round(255-step) + ',' +   
+				                     Math.round(255-step2) + ',' + Math.round(255-step3) +  ',' + opacity + ')');
+					takeStep();
+                	grad.addColorStop(0.5, 'rgba(' + Math.round(step) + ',' +   
+				                       Math.round(255-step2) + ',' + Math.round(255-step3) +  ',' + opacity + ')');
 					//takeStep();
 					//grad.addColorStop(0.6, 'rgba(' + Math.round(255-step) + ',' +   
-				                    //Math.round(255-step2) + ',' + Math.round(255-(step + step2)) + ',' + opacity + ')');
+				    //                Math.round(255-step2) + ',' + Math.round(255-step3) + ',' + opacity + ')');
 					takeStep();
                 	grad.addColorStop(0.8, 'rgba(' + Math.round(255-step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-(step2 + step)) + ',' + opacity + ')');
+				                      Math.round(255-step2) + ',' + Math.round(step3) + ',' + opacity + ')');
 					takeStep();
-                	grad.addColorStop(1, 'rgba(' + Math.round(255-step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-(step2 - step)) + ',' + opacity + ')');
+                	grad.addColorStop(1, 'rgba(' + Math.round(step) + ',' +   
+				                       Math.round(step2) + ',' + Math.round(step3) + ',' + opacity + ')');
 
                 	ctx.fillStyle = grad;
                 	ctx.fillRect(0, 0, width, height);
