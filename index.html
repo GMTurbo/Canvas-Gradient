@@ -3,126 +3,179 @@
         <title>Linear Gradient Test</title>
         <script type="text/javascript">
 			
-			var width, height, drawing; 
-			
+			var width, height, drawing;
+
+			var clock, showClock = false;
+
 			var canvas;
-			
+
 			var ctx, grad;
-			
+
 			var timer = null;
-			
-			var step = 0, step2 = 255, step3=128, dir1 = 1, dir2 = -1, dir3=1, angle = 0, startAngle = 0, length, opacity = 1;
-			
-			var takeStep = function(){
-				step += dir1*0.25;
-				step2 += dir2*0.25;
-				step3 += dir3*0.25;
-				if(step > 255 || step < 0){
-					step > 255 ? dir1 = -1 : dir1 = 1;
-					step += dir1*0.5;
+
+			var step1 = 255,
+				step2 = 255,
+				step3 = 255,
+				step4 = 255,
+				step5 = 255,
+				step6 = 255,
+				dir1 = -1,
+				dir2 = 1,
+				dir3 = -1,
+				dir4 = 1,
+				dir5 = -1,
+				dir6 = 1,
+				dirA = 1,
+				inc1 = 0.25 + Math.random() * 0.75,
+				inc2 = 0.25 + Math.random() * 0.75,
+				inc3 = 0.25 + Math.random() * 0.75,
+				inc4 = 0.25 + Math.random() * 0.75,
+				inc5 = 0.25 + Math.random() * 0.75,
+				inc6 = 0.25 + Math.random() * 0.75,
+				angle = 0,
+				sineStep = 0,
+				startAngle = 0,
+				length,
+				rotate = true;
+
+			var takeStep = function() {
+				incrSize = 0.35;
+				step1 += dir1 * inc1;
+				step2 += dir2 * inc2;
+				step3 += dir3 * inc3;
+				step4 += dir4 * inc4;
+				step5 += dir5 * inc5;
+				step6 += dir6 * inc6;
+				if (step1 > 255 || step1 < 0) {
+					step1 > 255 ? dir1 = -1 : dir1 = 1;
+					inc1 = incrSize + Math.random() * 0.75;
+					step1 += dir1 * inc1;
 				}
-				if(step2 < 0 || step2 > 255){
+				if (step2 < 0 || step2 > 255) {
 					step2 > 255 ? dir2 = -1 : dir2 = 1;
-					step2 += dir2*0.5;
+					inc2 = incrSize + Math.random() * 0.75;
+					step2 += dir2 * inc2;
 				}
-				if(step3 < 0 || step3 > 255){
+				if (step3 < 0 || step3 > 255) {
 					step3 > 255 ? dir3 = -1 : dir3 = 1;
-					step3 += dir3*0.5;
+					inc3 = incrSize + Math.random() * 0.75;
+					step3 += dir3 * inc3;
+				}
+				if (step4 > 255 || step4 < 0) {
+					step4 > 255 ? dir4 = -1 : dir4 = 1;
+					inc4 = incrSize + Math.random() * 0.75;
+					step4 += dir4 * inc4;
+				}
+				if (step5 < 0 || step5 > 255) {
+					step5 > 255 ? dir5 = -1 : dir5 = 1;
+					inc5 = incrSize + Math.random() * 0.75;
+					step5 += dir5 * inc5;
+				}
+				if (step6 < 0 || step6 > 255) {
+					step6 > 255 ? dir6 = -1 : dir6 = 1;
+					inc6 = incrSize + Math.random() * 0.75;
+					step6 += dir6 * inc6;
 				}
 			}
-			
-			var toRads = function(degs){ return degs * Math.PI/180.0;}
-			var toDegs= function(rads){ return rads * 180.0/Math.PI;}
-			
-			function randomFromTo(from, to){
-			       return Math.floor(Math.random() * (to - from + 1) + from);
-			    }
-			
-			function init(){
-				
+
+			var toRads = function(degs) {
+				return degs * Math.PI / 180.0;
+			}
+			var toDegs = function(rads) {
+				return rads * 180.0 / Math.PI;
+			}
+
+			function randomFromTo(from, to) {
+				return Math.floor(Math.random() * (to - from + 1) + from);
+			}
+
+			function init(exhib) {
+
 				drawing = true;
-				
-				width = window.innerWidth*0.95;
-				
-				height = window.innerHeight*0.95;
-				
-				length = Math.pow(width*width + height*height, 0.5);
-				
-				startAngle = toDegs(Math.atan(-width/2, height/2));
-				
+
+				width = window.innerWidth;
+
+				height = window.innerHeight;
+
+				length = Math.pow(width * width + height * height, 0.5);
+
+				startAngle = toDegs(Math.atan(-width / 2, height / 2));
+				clock = document.getElementById('clock');
+				if (exhib) {
+					clock.removeClassName("hide");
+					tick();
+					setInterval("tick()", 5000);
+				}
+
 				canvas = document.getElementById("canvas");
 				canvas.width = width;
 				canvas.height = height;
 
-				ctx = canvas.getContext("2d"), 
-				
+				ctx = canvas.getContext("2d"),
+
 				grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-				
-				setInterval("draw()", 33);
-				
+
+				setInterval("draw()", 100);
 			}
-			
-			document.onkeypress = function(event){
-				switch(event.keyCode){
-					case 32:
-						drawing = !drawing;
+
+			document.onkeypress = function(event) {
+				switch (event.keyCode) {
+				case 32:
+					drawing = !drawing;
 					break;
 				}
 			}
-			
-            function draw() {
-				if(drawing){
- 					clearCanvas(ctx, canvas);
-                // set up gradient
 
-					grad = ctx.createLinearGradient(-length*Math.sin(toRads(angle)), -length*Math.cos(toRads(angle)), length*Math.sin(toRads(angle)), length*Math.cos(toRads(angle)) );
-					
-					//(step - step2)
-					grad.addColorStop(0, 'rgba(' + Math.round(255-step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-step3) + ',' + opacity + ')');
+			function tick() {
+				var now = new Date();
+				var hour = now.getHours();
+				var minute = now.getMinutes();
+				if (minute < 10) {
+					minute = "0" + minute;
+				}
+				hour = hour > 12 ? hour - 12 : hour;
+				clock.innerText = hour + ":" + minute;
+			}
+
+			function draw() {
+				if (drawing) {
+					clearCanvas(ctx, canvas);
+					// set up gradient
+					grad = ctx.createLinearGradient(-length * Math.sin(toRads(angle)), -length * Math.cos(toRads(angle)), length * Math.sin(toRads(angle)), length * Math.cos(toRads(angle)));
+
+					//grad.addColorStop(0, 'rgb(' + Math.round(step1) + ',' + Math.round(step2) + ',' + Math.round(step3) + ')');
 					takeStep();
-					grad.addColorStop(0.2, 'rgba(' + Math.round(255-step) + ',' +   
-				                     Math.round(255-step2) + ',' + Math.round(255-step3) +  ',' + opacity + ')');
+					grad.addColorStop(0.2*Math.abs(Math.sin(sineStep)), 'rgb(' + Math.round(step1) + ',' + Math.round(step2) + ',' + Math.round(step3) + ')');
 					takeStep();
-                	grad.addColorStop(0.5, 'rgba(' + Math.round(step) + ',' +   
-				                       Math.round(255-step2) + ',' + Math.round(255-step3) +  ',' + opacity + ')');
+					grad.addColorStop(1-0.2*Math.abs(Math.cos(sineStep)), 'rgb(' + Math.round(255-step6) + ',' + Math.round(255-step5) + ',' + Math.round(255-step4) + ')');
+					takeStep();
+					//grad.addColorStop(1, 'rgb(' + Math.round(step4) + ',' + Math.round(step5) + ',' + Math.round(step6) + ')');
 					//takeStep();
-					//grad.addColorStop(0.6, 'rgba(' + Math.round(255-step) + ',' +   
-				    //                Math.round(255-step2) + ',' + Math.round(255-step3) + ',' + opacity + ')');
-					takeStep();
-                	grad.addColorStop(0.8, 'rgba(' + Math.round(255-step) + ',' +   
-				                      Math.round(255-step2) + ',' + Math.round(step3) + ',' + opacity + ')');
-					takeStep();
-                	grad.addColorStop(1, 'rgba(' + Math.round(step) + ',' +   
-				                       Math.round(step2) + ',' + Math.round(step3) + ',' + opacity + ')');
 
-                	ctx.fillStyle = grad;
-                	ctx.fillRect(0, 0, width, height);
+					ctx.fillStyle = grad;
+					ctx.fillRect(0, 0, width, height);
 
-					angle+=0.5;
-					if(angle>359 + startAngle){
-						angle = startAngle;
+					sineStep += 0.05;
+					if (sineStep > 2*Math.PI) {
+							sineStep = 0;
+					}
+
+					if (rotate) {
+						angle += dirA * 0.25;
+						if (angle > 45 || angle < -45) {
+							angle > 45 ? dirA = -1 : dirA = 1;
+							angle += dirA * 0.25;
+						}
 					}
 				}
-				
-            }
+
+			}
 
 			function clearCanvas(context, canvas) {
-			  context.clearRect(0, 0, width, height);
-			  var w = canvas.width;
-			  canvas.width = 1;
-			  canvas.width = w;
-			}
-			
-			function draw2(){
-				var ctx = document.getElementById('canvas').getContext('2d');  
-				  for (var i=0;i<26;i++){  
-				    for (var j=0;j<26;j++){  
-				      ctx.fillStyle = 'rgb(' + Math.floor(255-6.5*i) + ',' +   
-				                       Math.floor(255-6.5*j) + ',0)';  
-				      ctx.fillRect(j*25,i*25,25,25);  
-				    }  
-				  }
+				context.clearRect(0, 0, width, height);
+				var w = canvas.width;
+				canvas.width = 1;
+				canvas.width = w;
 			}
 			
         </script>
