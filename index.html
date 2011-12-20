@@ -36,7 +36,7 @@
 				sineStep = 0,
 				startAngle = 0,
 				length,
-				rotate = true;
+				rotate = false;
 
 			var takeStep = function() {
 				incrSize = 0.35;
@@ -93,9 +93,9 @@
 
 				drawing = true;
 
-				width = window.innerWidth;
+				width = window.innerWidth*0.97;
 
-				height = window.innerHeight;
+				height = window.innerHeight*0.97;
 
 				length = Math.pow(width * width + height * height, 0.5);
 
